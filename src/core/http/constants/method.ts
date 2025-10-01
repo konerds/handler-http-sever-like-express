@@ -1,4 +1,4 @@
-const C_METHOD = {
+const CONST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',
   HEAD: 'HEAD',
@@ -8,4 +8,4 @@ const C_METHOD = {
   PUT: 'PUT',
 } as const;
 
-export { C_METHOD };
+export { CONST_METHOD };

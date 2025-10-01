@@ -1,12 +1,12 @@
 import { createServer, Server, Socket } from 'net';
 
 import {
-  C_REASON_STATUS_HTTP,
-  C_STATUS_HTTP,
-  ENCODING_UTF_8,
-  MIME_TEXT_PLAIN,
+  CONST_ENCODING_UTF_8,
+  CONST_MIME_TEXT_PLAIN,
+  CONST_REASON_STATUS_HTTP,
+  CONST_STATUS_HTTP,
 } from './constants';
-import { I_HANDLER, type T_REQUEST } from './interfaces';
+import type { I_HANDLER, T_REQUEST } from './interfaces';
 import { ErrorParseRequest, parseHead } from './request';
 import { buildResponse } from './response';
 import { getWrappedWithCharset } from './utils';
@@ -36,7 +36,14 @@ class ServerHTTP<T extends I_HANDLER> {
 
   start() {
     this.server = createServer((socket) => {
+      this.logger.info({
+        event: 'server_started',
+        host: this.hostname,
+        port: this.port,
+      });
+
       this.sockets.add(socket);
+
       socket.on('close', () => this.sockets.delete(socket));
 
       socket.on('error', (err: any) => {
@@ -60,7 +67,7 @@ class ServerHTTP<T extends I_HANDLER> {
           }
 
           const { headers, httpVersion, method, path, query } = parseHead(
-            buffer.slice(0, idxEndHead).toString(ENCODING_UTF_8)
+            buffer.slice(0, idxEndHead).toString(CONST_ENCODING_UTF_8)
           );
           const contentLength = Number(headers['content-length'] || 0);
 
@@ -68,14 +75,15 @@ class ServerHTTP<T extends I_HANDLER> {
             Number.isFinite(contentLength) &&
             contentLength > this.limitBodyRequest
           ) {
-            const body = C_REASON_STATUS_HTTP[C_STATUS_HTTP.PAYLOAD_TOO_LARGE];
+            const body =
+              CONST_REASON_STATUS_HTTP[CONST_STATUS_HTTP.PAYLOAD_TOO_LARGE];
             socket.write(
               buildResponse(
-                C_STATUS_HTTP.PAYLOAD_TOO_LARGE,
+                CONST_STATUS_HTTP.PAYLOAD_TOO_LARGE,
                 {
                   Connection: 'close',
                   'Content-Length': String(Buffer.byteLength(body)),
-                  'Content-Type': getWrappedWithCharset(MIME_TEXT_PLAIN),
+                  'Content-Type': getWrappedWithCharset(CONST_MIME_TEXT_PLAIN),
                 },
                 body
               )
@@ -122,17 +130,19 @@ class ServerHTTP<T extends I_HANDLER> {
           this.logger.error({ event: 'server_error', message: e?.message });
           socket.write(
             buildResponse(
-              C_STATUS_HTTP.INTERNAL_SERVER_ERROR,
+              CONST_STATUS_HTTP.INTERNAL_SERVER_ERROR,
               {
                 Connection: 'close',
                 'Content-Length': String(
                   Buffer.byteLength(
-                    C_REASON_STATUS_HTTP[C_STATUS_HTTP.INTERNAL_SERVER_ERROR]
+                    CONST_REASON_STATUS_HTTP[
+                      CONST_STATUS_HTTP.INTERNAL_SERVER_ERROR
+                    ]
                   )
                 ),
-                'Content-Type': getWrappedWithCharset(MIME_TEXT_PLAIN),
+                'Content-Type': getWrappedWithCharset(CONST_MIME_TEXT_PLAIN),
               },
-              C_REASON_STATUS_HTTP[C_STATUS_HTTP.INTERNAL_SERVER_ERROR]
+              CONST_REASON_STATUS_HTTP[CONST_STATUS_HTTP.INTERNAL_SERVER_ERROR]
             )
           );
           socket.end();

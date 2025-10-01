@@ -1,5 +1,5 @@
-import { C_STATUS_HTTP } from '../constants';
+import { CONST_STATUS_HTTP } from '../constants';
 
-type T_STATUS_HTTP = (typeof C_STATUS_HTTP)[keyof typeof C_STATUS_HTTP];
+type T_STATUS_HTTP = (typeof CONST_STATUS_HTTP)[keyof typeof CONST_STATUS_HTTP];
 
-export { T_STATUS_HTTP };
+export type { T_STATUS_HTTP };

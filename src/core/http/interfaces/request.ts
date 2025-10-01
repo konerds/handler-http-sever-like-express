@@ -1,5 +1,5 @@
-import { T_METHOD } from './method';
-import { T_QUERY } from './query';
+import type { T_METHOD } from './method';
+import type { T_QUERY } from './query';
 
 type T_REQUEST = {
   method: T_METHOD;
@@ -18,4 +18,4 @@ type T_PARSED_HEAD_REQUEST = {
   query: T_QUERY;
 };
 
-export { T_PARSED_HEAD_REQUEST, T_REQUEST };
+export type { T_PARSED_HEAD_REQUEST, T_REQUEST };

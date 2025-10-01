@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 
 const CWD = process.cwd();
 const NODE_ENV = process.env.NODE_ENV || 'development';

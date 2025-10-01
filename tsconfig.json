@@ -6,10 +6,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@http": ["src/core/http"],
-      "@handler": ["src/handler"],
       "@config": ["src/config"],
-      "@logger": ["src/logger"]
+      "@express": ["src/core/express"],
+      "@http": ["src/core/http"],
+      "@logger": ["src/logger"],
+      "@middlewares": ["src/middlewares"],
+      "@routes": ["src/routes"]
     },
     "outDir": "dist",
     "rootDir": "src",
@@ -18,5 +20,6 @@
     "skipLibCheck": true,
     "lib": ["ES2021"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "__tests__"]
 }

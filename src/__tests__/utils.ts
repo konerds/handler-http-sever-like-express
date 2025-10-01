@@ -1,15 +1,15 @@
-import { mkdtempSync, rmSync } from 'fs';
-import os from 'os';
-import { join } from 'path';
+import { mkdtempSync, rmSync } from 'node:fs';
+import os from 'node:os';
+import { join } from 'node:path';
 
-import { C_METHOD, type T_REQUEST } from '@http';
+import { CONST_METHOD, type T_REQUEST } from '@http';
 
 function createRequest(path: string, accept?: string): T_REQUEST {
   return {
     body: Buffer.alloc(0),
     headers: accept ? { accept } : {},
     httpVersion: 'HTTP/1.1',
-    method: C_METHOD.GET,
+    method: CONST_METHOD.GET,
     path,
     query: {},
   };

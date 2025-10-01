@@ -1,30 +1,36 @@
 import { getConfigs } from '@config';
-import { Handler } from '@handler';
+import { express, ExpressAdapter, json, urlencoded } from '@express';
 import { ServerHTTP } from '@http';
 import { logger } from '@logger';
+import { serveStatic } from '@middlewares';
+import { routerBase } from '@routes';
 
 const { HOST_SERVER, LIMIT_BODY_REQUEST, PATH_STATIC, PORT_SERVER } =
   getConfigs();
+
+const app = express();
+
+app.use(json());
+app.use(urlencoded());
+
+app.use('/api', routerBase);
+
+app.use(serveStatic(PATH_STATIC));
 
 const server = new ServerHTTP(
   HOST_SERVER,
   PORT_SERVER,
   LIMIT_BODY_REQUEST,
-  new Handler(PATH_STATIC, logger),
+  new ExpressAdapter(app, logger),
   logger
 );
 
 server.start();
 
-async function onSignal(signal: NodeJS.Signals) {
-  try {
-    logger.info({ event: 'shutdown_signal', signal });
-    await server.stop();
-  } catch (e: any) {
-    logger.error({ error: e?.message || e, event: 'shutdown_error' });
-  } finally {
-    process.exit(0);
-  }
+async function onSignal() {
+  logger.info({ event: 'signal', message: 'shutting down...' });
+  await server.stop({ msGrace: 300, msKill: 3000 });
+  process.exit(0);
 }
 
 process.on('SIGINT', onSignal);

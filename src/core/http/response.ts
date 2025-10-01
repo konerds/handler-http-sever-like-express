@@ -1,4 +1,4 @@
-import { C_REASON_STATUS_HTTP, ENCODING_UTF_8 } from './constants';
+import { CONST_ENCODING_UTF_8, CONST_REASON_STATUS_HTTP } from './constants';
 
 function buildResponse(
   status: number,
@@ -7,12 +7,12 @@ function buildResponse(
 ) {
   return Buffer.concat([
     Buffer.from(
-      `HTTP/1.1 ${status} ${C_REASON_STATUS_HTTP[status] || 'OK'}\r\n` +
+      `HTTP/1.1 ${status} ${CONST_REASON_STATUS_HTTP[status] || 'OK'}\r\n` +
         Object.entries(headers)
           .map(([k, v]) => `${k}: ${v}`)
           .join('\r\n') +
         '\r\n\r\n',
-      ENCODING_UTF_8
+      CONST_ENCODING_UTF_8
     ),
     Buffer.isBuffer(body) ? body : Buffer.from(body),
   ]);

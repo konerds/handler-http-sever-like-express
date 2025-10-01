@@ -1,4 +1,4 @@
-import { T_QUERY } from './interfaces';
+import type { T_QUERY } from './interfaces';
 
 function parseQueryString(qs = '') {
   const parsed: T_QUERY = {};

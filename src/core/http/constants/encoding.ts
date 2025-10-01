@@ -1,4 +1,4 @@
-const ENCODING_UTF_8 = 'utf-8';
-const ENCODING_LATIN1 = 'latin1';
+const CONST_ENCODING_UTF_8 = 'utf-8';
+const CONST_ENCODING_LATIN1 = 'latin1';
 
-export { ENCODING_LATIN1, ENCODING_UTF_8 };
+export { CONST_ENCODING_LATIN1, CONST_ENCODING_UTF_8 };
