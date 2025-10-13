@@ -33,6 +33,10 @@ const serveStatic = (pathRootStatic: string) =>
       return;
     }
 
+    if (decoded.startsWith('/api')) {
+      return next();
+    }
+
     if (decoded.includes('\0')) {
       res
         .status(CONST_STATUS_HTTP.BAD_REQUEST)
@@ -85,7 +89,7 @@ const serveStatic = (pathRootStatic: string) =>
         await res.sendFile(resolve(pathRootStatic, 'index.html'));
       }
     } catch {
-      next();
+      return next();
     }
   });
 

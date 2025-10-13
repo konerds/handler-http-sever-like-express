@@ -10,6 +10,7 @@ import type {
   DefinitionRoute,
   ErrorRequestHandler,
   Request as ExpressRequest,
+  HandlerAny,
   Layer,
   NextFunction,
   RequestHandler,
@@ -119,7 +120,7 @@ class RouterImpl {
   #push(
     method: DefinitionRoute['method'],
     path: string,
-    ...handlers: (RequestHandler | ErrorRequestHandler)[]
+    ...handlers: HandlerAny[]
   ) {
     const pathCleaned = cleanPath(path);
 
@@ -223,9 +224,10 @@ class RouterImpl {
             );
 
             if (!res._sent) {
-              next();
+              return next();
             }
           }) as RequestHandler);
+
           continue;
         }
 

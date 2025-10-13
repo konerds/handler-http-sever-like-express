@@ -53,7 +53,7 @@ function makeStatic(rootDir: string) {
       const buf = await fs.readFile(targetAbs);
       res.end(buf);
     } catch {
-      next();
+      return next();
     }
   };
 }
@@ -86,7 +86,7 @@ function makeSpaFallback(rootDir: string) {
       const buf = await fs.readFile(indexAbs);
       res.type(CONST_MIME_TEXT_HTML).end(buf);
     } catch {
-      next();
+      return next();
     }
   };
 }
