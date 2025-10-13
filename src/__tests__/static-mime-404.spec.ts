@@ -61,7 +61,7 @@ function makeStatic(rootDir: string) {
       const buf = await fs.readFile(targetAbs);
       res.end(buf);
     } catch {
-      next();
+      return next();
     }
   };
 }

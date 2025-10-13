@@ -1,7 +1,9 @@
 import {
   CONST_ENCODING_UTF_8,
+  CONST_METHOD,
   CONST_MIME_APPLICATION_JSON,
   CONST_MIME_APPLICATION_X_WWW_FORM_URLENCODED,
+  CONST_STATUS_HTTP,
 } from '@http';
 
 import type { Application, RequestHandler } from './interfaces';
@@ -97,7 +99,7 @@ function json(): RequestHandler {
       return next(e);
     }
 
-    next();
+    return next();
   };
 }
 
@@ -150,8 +152,40 @@ function urlencoded(): RequestHandler {
     req.bodyText = text;
     req.body = obj;
 
-    next();
+    return next();
   };
 }
 
-export { express, json, Router, urlencoded };
+function cors(opts?: { allowCredentials?: boolean }): RequestHandler {
+  const { allowCredentials = false } = opts || {};
+
+  return (req, res, next) => {
+    const origin = (req.headers['origin'] as string) || '*';
+
+    res.set('Access-Control-Allow-Origin', origin);
+    res.set('Vary', 'Origin');
+    res.set(
+      'Access-Control-Allow-Credentials',
+      allowCredentials ? 'true' : 'false'
+    );
+    res.set(
+      'Access-Control-Allow-Headers',
+      (req.headers['access-control-request-headers'] as string) ||
+        'Content-Type, Authorization, Accept'
+    );
+    res.set(
+      'Access-Control-Allow-Methods',
+      `${CONST_METHOD.GET},${CONST_METHOD.POST},${CONST_METHOD.PUT},${CONST_METHOD.PATCH},${CONST_METHOD.DELETE},${CONST_METHOD.OPTIONS}`
+    );
+
+    if (req.method === CONST_METHOD.OPTIONS) {
+      res.status(CONST_STATUS_HTTP.NO_CONTENT).send('');
+
+      return;
+    }
+
+    return next();
+  };
+}
+
+export { cors, express, json, Router, urlencoded };

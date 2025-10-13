@@ -12,13 +12,13 @@ import { buildResponse } from './response';
 import { getWrappedWithCharset } from './utils';
 
 class ServerHTTP<T extends I_HANDLER> {
+  private handler: T;
+  private hostname: string;
+  private limitBodyRequest: number;
+  private logger: any;
+  private port: number;
   private server?: Server;
   private sockets = new Set<Socket>();
-  private hostname: string;
-  private port: number;
-  private handler: T;
-  private logger: any;
-  private limitBodyRequest: number;
 
   constructor(
     hostname: string,
@@ -36,14 +36,7 @@ class ServerHTTP<T extends I_HANDLER> {
 
   start() {
     this.server = createServer((socket) => {
-      this.logger.info({
-        event: 'server_started',
-        host: this.hostname,
-        port: this.port,
-      });
-
       this.sockets.add(socket);
-
       socket.on('close', () => this.sockets.delete(socket));
 
       socket.on('error', (err: any) => {

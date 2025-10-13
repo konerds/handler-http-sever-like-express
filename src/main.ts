@@ -1,5 +1,5 @@
 import { getConfigs } from '@config';
-import { express, ExpressAdapter, json, urlencoded } from '@express';
+import { cors, express, ExpressAdapter, json, urlencoded } from '@express';
 import { ServerHTTP } from '@http';
 import { logger } from '@logger';
 import { serveStatic } from '@middlewares';
@@ -10,11 +10,10 @@ const { HOST_SERVER, LIMIT_BODY_REQUEST, PATH_STATIC, PORT_SERVER } =
 
 const app = express();
 
+app.use(cors());
 app.use(json());
 app.use(urlencoded());
-
 app.use('/api', routerBase);
-
 app.use(serveStatic(PATH_STATIC));
 
 const server = new ServerHTTP(
@@ -29,8 +28,14 @@ server.start();
 
 async function onSignal() {
   logger.info({ event: 'signal', message: 'shutting down...' });
-  await server.stop({ msGrace: 300, msKill: 3000 });
-  process.exit(0);
+
+  try {
+    process.stdin.pause();
+    await server.stop({ msGrace: 300, msKill: 3000 });
+  } catch {
+  } finally {
+    process.exit(0);
+  }
 }
 
 process.on('SIGINT', onSignal);
