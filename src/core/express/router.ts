@@ -109,11 +109,17 @@ class RouterImpl {
 
     await next();
 
-    if (!res._sent && !fallthrough) {
-      res
-        .status(CONST_STATUS_HTTP.NOT_FOUND)
-        .type(CONST_MIME_TEXT_PLAIN)
-        .send(CONST_REASON_STATUS_HTTP[CONST_STATUS_HTTP.NOT_FOUND]);
+    if (!res._sent) {
+      if (!fallthrough) {
+        return res
+          .status(CONST_STATUS_HTTP.NOT_FOUND)
+          .type(CONST_MIME_TEXT_PLAIN)
+          .send(CONST_REASON_STATUS_HTTP[CONST_STATUS_HTTP.NOT_FOUND]);
+      }
+
+      if (typeof stateError !== 'undefined') {
+        throw stateError;
+      }
     }
   }
 
@@ -212,16 +218,20 @@ class RouterImpl {
           this.#push(CONST_METHOD_ROUTER.USE, base, (async (req, res, next) => {
             const incoming = cleanPath(req.path || '/');
 
-            await (h as any).#dispatch(
-              {
-                ...req,
-                path: incoming.startsWith(base)
-                  ? incoming.slice(base.length) || '/'
-                  : incoming,
-              } as ExpressRequest,
-              res,
-              true
-            );
+            try {
+              await h.#dispatch(
+                {
+                  ...req,
+                  path: incoming.startsWith(base)
+                    ? incoming.slice(base.length) || '/'
+                    : incoming,
+                } as ExpressRequest,
+                res,
+                true
+              );
+            } catch (e) {
+              return next(e);
+            }
 
             if (!res._sent) {
               return next();
