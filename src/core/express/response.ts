@@ -137,8 +137,7 @@ class Response {
       typeof argFirst === 'number' ? argFirst : CONST_STATUS_HTTP.FOUND
     )
       .location(url)
-      .type(CONST_MIME_TEXT_PLAIN)
-      .send(`Redirecting to ${url}`);
+      .send();
 
     return this;
   }
